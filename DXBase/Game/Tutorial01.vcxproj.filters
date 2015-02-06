@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns:atg="http://atg.xbox.com" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Base">
+      <UniqueIdentifier>{4e04b820-d160-4cc0-b8bc-54580483ab4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{8fa425d5-61e5-4c22-9d31-c7c501cdc1fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base\Resource Files">
+      <UniqueIdentifier>{8e114980-c1a3-4ada-ad7c-83caadf5daeb}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Engine\GameObject Headers">
+      <UniqueIdentifier>{c0ba092d-dda4-4d05-9c21-0c0ebca4e2b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GameObject Source">
+      <UniqueIdentifier>{08d8b7f6-5f38-461b-bda5-9cfc09aa0ffc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header Files">
+      <UniqueIdentifier>{142f2be2-c253-4b1d-9859-b920104b7a79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Source Files">
+      <UniqueIdentifier>{25ec56ac-3c76-43de-9c8e-fca5afa85b3e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CLInclude Include="resource.h">
+      <Filter>Base\Resource Files</Filter>
+    </CLInclude>
+    <ClInclude Include="CMOGO.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectList.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="terrain.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Turret_base.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="tpscamera.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="VBGO.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="fileVBGO.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="VBCube.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="SpikedVB.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="spiral.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="pillow.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drawdata.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gamedata.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gameobject.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gamestate.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyEffectsFactory.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vertex.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject2D.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawData2D.h">
+      <Filter>Engine\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="snail.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Tutorial01.rc">
+      <Filter>Base\Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Tutorial01.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="CMOGO.cpp">
+      <Filter>Engine\GameObject Source</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Engine\GameObject Source</Filter>
+    </ClCompile>
+    <ClCompile Include="terrain.cpp">
+      <Filter>Engine\GameObject Source</Filter>
+    </ClCompile>
+    <ClCompile Include="turret_base.cpp">
+      <Filter>Engine\GameObject Source</Filter>
+    </ClCompile>
+    <ClCompile Include="tpscamera.cpp">
+      <Filter>Engine\GameObject Source</Filter>
+    </ClCompile>
+    <ClCompile Include="VBGO.cpp">
+      <Filter>Engine\GameObject Source</Filter>
+    </ClCompile>
+    <ClCompile Include="fileVBGO.cpp">
+      <Filter>Engine\GameObject Source</Filter>
+    </ClCompile>
+    <ClCompile Include="light.cpp">
+      <Filter>Engine\GameObject Source</Filter>
+    </ClCompile>
+    <ClCompile Include="VBCube.cpp">
+      <Filter>Engine\GameObject Source</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cpp">
+      <Filter>Engine\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gameobject.cpp">
+      <Filter>Engine\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject2D.cpp">
+      <Filter>Engine\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="snail.cpp">
+      <Filter>Engine\GameObject Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
