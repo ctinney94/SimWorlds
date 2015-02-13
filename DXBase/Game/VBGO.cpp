@@ -264,7 +264,6 @@ void VBGO::BuildIB(ID3D11Device* _GD, void* _indices)
 	InitData.pSysMem = _indices;
 	hr = _GD->CreateBuffer(&bd, &InitData, &m_IndexBuffer);
 }
-
 void VBGO::BuildVB(ID3D11Device* _GD, int _numVerts, void* _vertices)
 {
 	//structures from creating buffers
@@ -278,6 +277,24 @@ void VBGO::BuildVB(ID3D11Device* _GD, int _numVerts, void* _vertices)
 	bd.ByteWidth = sizeof(myVertex) * _numVerts;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
+	ZeroMemory(&InitData, sizeof(InitData));
+	InitData.pSysMem = _vertices;
+	hr = _GD->CreateBuffer(&bd, &InitData, &m_VertexBuffer);
+}
+
+void VBGO::BuildDVB(ID3D11Device* _GD, int _numVerts, void* _vertices)
+{
+	//structures from creating buffers
+	D3D11_BUFFER_DESC bd;
+	D3D11_SUBRESOURCE_DATA InitData;
+	HRESULT hr = S_OK;
+
+	//build vertex buffer
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.ByteWidth = sizeof(myVertex) * _numVerts;
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = _vertices;
 	hr = _GD->CreateBuffer(&bd, &InitData, &m_VertexBuffer);

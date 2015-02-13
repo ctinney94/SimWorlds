@@ -16,5 +16,6 @@
 #include "spiral.h"
 #include "pillow.h"
 #include "snail.h"
+#include "VBPlane.h"
 
 #endif

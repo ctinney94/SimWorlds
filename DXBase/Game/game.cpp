@@ -57,8 +57,8 @@ Game::Game(ID3D11Device* _pd3dDevice, HINSTANCE _hInstance) :m_playTime(0), m_my
 	m_cam->SetPos( Vector3(0.0f, 300.0f,300.0f) );
 	m_GameObjects.push_back(m_cam);
 
-	Terrain* terrain = new Terrain("table.cmo", _pd3dDevice, m_myEF,Vector3(100.0f,0.0f,100.0f), 0.0f, 0.0f, 0.0f, 0.25f * Vector3::One);
-	m_GameObjects.push_back(terrain);
+	/*Terrain* terrain = new Terrain("table.cmo", _pd3dDevice, m_myEF,Vector3(100.0f,0.0f,100.0f), 0.0f, 0.0f, 0.0f, 0.25f * Vector3::One);
+	m_GameObjects.push_back(terrain);*/
 
 	Turret_Base* base = new Turret_Base("treasure_chest.cmo", _pd3dDevice, m_myEF);
 	m_GameObjects.push_back(base);
@@ -70,7 +70,18 @@ Game::Game(ID3D11Device* _pd3dDevice, HINSTANCE _hInstance) :m_playTime(0), m_my
 	m_Light = new Light(Vector3(0.0f, 100.0f, 160.0f), Color(1.0f, 1.0f, 1.0f, 1.0f), Color(0.4f, 0.1f, 0.1f, 1.0f));
 	m_GameObjects.push_back(m_Light);
 
-	FileVBGO* terrainBox = new FileVBGO("../Assets/terrainTex.txt", _pd3dDevice);
+	VBPlane* plane = new  VBPlane();
+	plane->init(50, _pd3dDevice);
+	plane->SetPos(Vector3(0.0f, -180.0f, 0.0f));
+	plane->SetScale(7.5f);
+	m_GameObjects.push_back(plane);
+
+	VBCube* cube = new VBCube();
+	cube->init(35, _pd3dDevice);
+	cube->SetPos(Vector3(100.0f, 0.0f, 0.0f));
+	m_GameObjects.push_back(cube);
+
+	/*FileVBGO* terrainBox = new FileVBGO("../Assets/terrainTex.txt", _pd3dDevice);
 	m_GameObjects.push_back(terrainBox);
 
 	FileVBGO* Box = new FileVBGO("../Assets/cube.txt", _pd3dDevice);
@@ -78,12 +89,6 @@ Game::Game(ID3D11Device* _pd3dDevice, HINSTANCE _hInstance) :m_playTime(0), m_my
 	Box->SetPos(Vector3(0.0f, 0.0f, -100.0f));
 	Box->SetPitch( XM_PIDIV4 );
 	Box->SetScale( 20.0f );
-
-	VBCube* cube = new VBCube();
-	cube->init(11, _pd3dDevice);
-	cube->SetPos(Vector3(100.0f, 0.0f, 0.0f));
-	cube->SetScale(4.0f);
-	m_GameObjects.push_back(cube);
 
 	SpikedVB* spikes = new SpikedVB();
 	spikes->init(11, _pd3dDevice);
@@ -110,7 +115,7 @@ Game::Game(ID3D11Device* _pd3dDevice, HINSTANCE _hInstance) :m_playTime(0), m_my
 
 	GameObject2D* logo = new GameObject2D("logo", _pd3dDevice);
 	logo->SetPos(200.0f * Vector2::One);
-	m_GameObject2Ds.push_back(logo);
+	m_GameObject2Ds.push_back(logo);*/
 	
 	ID3D11DeviceContext* pd3dImmediateContext;
 	_pd3dDevice->GetImmediateContext(&pd3dImmediateContext);

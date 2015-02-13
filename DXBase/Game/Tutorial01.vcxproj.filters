@@ -103,6 +103,9 @@
     <ClInclude Include="snail.h">
       <Filter>Engine\GameObject Headers</Filter>
     </ClInclude>
+    <ClInclude Include="VBPlane.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tutorial01.rc">
@@ -150,6 +153,9 @@
       <Filter>Engine\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="snail.cpp">
+      <Filter>Engine\GameObject Source</Filter>
+    </ClCompile>
+    <ClCompile Include="VBPlane.cpp">
       <Filter>Engine\GameObject Source</Filter>
     </ClCompile>
   </ItemGroup>

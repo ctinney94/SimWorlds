@@ -141,6 +141,12 @@ void VBCube::init(int _size, ID3D11Device* GD)
 
 	BuildIB(GD, indices);
 	BuildVB(GD, numVerts, m_vertices);
+	BuildDVB(GD, numVerts, m_vertices);
 
 	delete[] m_vertices; //this is no longer needed as this is now in the Vertex Buffer
+}
+
+void VBCube::Transform()
+{
+
 }

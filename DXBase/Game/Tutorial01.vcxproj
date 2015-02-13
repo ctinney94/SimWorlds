@@ -367,6 +367,7 @@
     <ClCompile Include="Tutorial01.cpp" />
     <ClCompile Include="VBCube.cpp" />
     <ClCompile Include="VBGO.cpp" />
+    <ClCompile Include="VBPlane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
@@ -385,6 +386,7 @@
     <ClInclude Include="MyEffectsFactory.h" />
     <ClInclude Include="ObjectList.h" />
     <ClInclude Include="pillow.h" />
+    <ClInclude Include="VBPlane.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="snail.h" />
     <ClInclude Include="SpikedVB.h" />

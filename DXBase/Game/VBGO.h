@@ -64,7 +64,10 @@ protected:
 	void BuildIB(ID3D11Device* _GD,void* _indices);
 
 	//once populated build a Vertex Buffer
-	void BuildVB(ID3D11Device* _GD,int _numVerts, void* _vertices);
+	void BuildVB(ID3D11Device* _GD, int _numVerts, void* _vertices);
+
+	//Build a DYNAMIC vertex buffer! Ooooh!
+	void BuildDVB(ID3D11Device* _GD, int _numVerts, void* _vertices);
 
 };
 
