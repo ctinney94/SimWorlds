@@ -1,11 +1,16 @@
 #include "VBPlane.h"
 
+VBPlane::VBPlane()
+{
+	changeMe = 0;
+}
+
 void VBPlane::init(int _size, ID3D11Device* GD)
 {
 	m_size = _size;
 
 	//calculate number of vertices and primatives
-	int numVerts = 6 * 6 * (m_size - 1) * (m_size - 1);
+	numVerts = 6 * 6 * (m_size - 1) * (m_size - 1);
 	m_numPrims = numVerts / 3;
 	m_numVertices = numVerts;
 	m_vertices = new myVertex[numVerts];
@@ -17,7 +22,7 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 		indices[i] = i;
 		m_vertices[i].texCoord = Vector2::One;
 	}
-
+	
 	//in each loop create the two traingles for the matching sub-square on each of the six faces
 	int vert = 0;
 	for (int i = -(m_size - 1) / 2; i<(m_size - 1) / 2; i++)
@@ -42,8 +47,7 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 	}
 
 	//carry out some kind of transform on these vertices to make this object more interesting
-	Transform();
-
+	//Transform();
 	//calculate the normals for the basic lighting in the base shader
 	for (int i = 0; i < m_numPrims; i++)
 	{
@@ -68,10 +72,10 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 	BuildVB(GD, numVerts, m_vertices);
 	//BuildDVB(GD, numVerts, m_vertices);
 
-	delete[] m_vertices; //this is no longer needed as this is now in the Vertex Buffer
+	
 }
 
-void VBPlane::draw(DrawData* _DD)
+void VBPlane::Draw(DrawData* _DD)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -87,10 +91,25 @@ void VBPlane::draw(DrawData* _DD)
 
 	//Reenable GPU access to the vertex buffer data.
 	_DD->pd3dImmediateContext->Unmap(m_VertexBuffer, 1);
+
+	VBGO::Draw(_DD);
 }
 
-
-void VBPlane::Transform()
+void VBPlane::Tick(GameData* _GD)
 {
+	Transform(_GD);
+	
+}
 
+void VBPlane::Transform(GameData* _GD)
+{
+	changeMe += _GD->dt *250.0f;
+	float Amp = 10.0f;
+	float freq = sin(2 * XM_PI);
+
+	for (int i = 0; i < m_numPrims * 3; i++)
+	{
+		m_vertices[i].Pos.y = (Amp * freq*changeMe) + m_vertices[i].Pos.x;
+	}
+	
 }
