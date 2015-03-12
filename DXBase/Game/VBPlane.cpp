@@ -47,7 +47,6 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 	}
 
 	//carry out some kind of transform on these vertices to make this object more interesting
-	//Transform();
 	//calculate the normals for the basic lighting in the base shader
 	for (int i = 0; i < m_numPrims; i++)
 	{
@@ -67,12 +66,9 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 		m_vertices[V3].Norm = norm;
 	}
 
-
 	BuildIB(GD, indices);
-	BuildVB(GD, numVerts, m_vertices);
-	//BuildDVB(GD, numVerts, m_vertices);
-
-	
+	//BuildVB(GD, numVerts, m_vertices);
+	BuildDVB(GD, numVerts, m_vertices);
 }
 
 void VBPlane::Draw(DrawData* _DD)
@@ -80,17 +76,17 @@ void VBPlane::Draw(DrawData* _DD)
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
-
 	//Disable GPU access to the vertex buffer data.
-	_DD->pd3dImmediateContext->Map(m_VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	HRESULT hr = _DD->pd3dImmediateContext->Map(m_VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
 	myVertex* p_vertices = (myVertex*)mappedResource.pData;
 
 	//Update the vertex buffer here.
 	memcpy(p_vertices, (void*)m_vertices, sizeof(myVertex) * m_numVertices);
+	p_vertices;
 
 	//Reenable GPU access to the vertex buffer data.
-	_DD->pd3dImmediateContext->Unmap(m_VertexBuffer, 1);
+	_DD->pd3dImmediateContext->Unmap(m_VertexBuffer, 0);
 
 	VBGO::Draw(_DD);
 }
@@ -98,18 +94,19 @@ void VBPlane::Draw(DrawData* _DD)
 void VBPlane::Tick(GameData* _GD)
 {
 	Transform(_GD);
-	
+
+	VBGO::Tick(_GD);
 }
 
 void VBPlane::Transform(GameData* _GD)
 {
-	changeMe += _GD->dt *250.0f;
-	float Amp = 10.0f;
-	float freq = sin(2 * XM_PI);
+	changeMe += _GD->dt *1.0f;
+	float Amp = 0.5f;
+	float freq =(2 * XM_PI);
 
 	for (int i = 0; i < m_numPrims * 3; i++)
 	{
-		m_vertices[i].Pos.y = (Amp * freq*changeMe) + m_vertices[i].Pos.x;
+		m_vertices[i].Pos.y = Amp*(sin(freq * changeMe + m_vertices[i].Pos.x));
 	}
 	
 }

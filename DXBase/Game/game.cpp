@@ -71,9 +71,9 @@ Game::Game(ID3D11Device* _pd3dDevice, HINSTANCE _hInstance) :m_playTime(0), m_my
 	m_GameObjects.push_back(m_Light);
 
 	VBPlane* plane = new  VBPlane();
-	plane->init(50, _pd3dDevice);
-	plane->SetPos(Vector3(0.0f, -180.0f, 0.0f));
-	plane->SetScale(7.5f);
+	plane->init(80, _pd3dDevice);
+	plane->SetPos(Vector3(0.0f, 0.0f, 0.0f));
+	plane->SetScale(5.0f);
 	m_GameObjects.push_back(plane);
 
 	VBCube* cube = new VBCube();
