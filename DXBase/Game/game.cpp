@@ -71,9 +71,9 @@ Game::Game(ID3D11Device* _pd3dDevice, HINSTANCE _hInstance) :m_playTime(0), m_my
 	m_GameObjects.push_back(m_Light);
 
 	VBPlane* plane = new  VBPlane();
-	plane->init(80, _pd3dDevice);
+	plane->init(40, _pd3dDevice);
 	plane->SetPos(Vector3(0.0f, 0.0f, 0.0f));
-	plane->SetScale(5.0f);
+	plane->SetScale(10.0f);
 	m_GameObjects.push_back(plane);
 
 	VBCube* cube = new VBCube();
@@ -186,11 +186,6 @@ bool Game::update()
 		return false;
 	}
 
-	if (m_mouse_state.rgbButtons[2] & 0x80)
-	{
-		return false;
-	}
-
 	if ((m_keyboardState[DIK_SPACE] & 0x80) && !(m_prevKeyboardState[DIK_SPACE] & 0x80))
 	{
 		if (m_GD->GS == GS_PLAY_MAIN_CAM)
@@ -262,6 +257,7 @@ void Game::render(ID3D11DeviceContext* _pd3dImmediateContext)
 bool Game::ReadKeyboard()
 {
 	//copy over old keyboard state
+	//256*sizeof(char));
 	memcpy(m_prevKeyboardState, m_keyboardState, sizeof(m_keyboardState));
 
 	//clear out previous state

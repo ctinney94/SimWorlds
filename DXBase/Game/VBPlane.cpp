@@ -1,8 +1,13 @@
 #include "VBPlane.h"
+#include <dinput.h>
+#include "gamedata.h"
 
 VBPlane::VBPlane()
 {
 	changeMe = 0;
+	time = 0;
+	Amp = 0.5f;
+	freq = 0.0f;
 }
 
 void VBPlane::init(int _size, ID3D11Device* GD)
@@ -23,6 +28,8 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 		m_vertices[i].texCoord = Vector2::One;
 	}
 	
+	float startHeight = 0.5f;
+
 	//in each loop create the two traingles for the matching sub-square on each of the six faces
 	int vert = 0;
 	for (int i = -(m_size - 1) / 2; i<(m_size - 1) / 2; i++)
@@ -30,19 +37,19 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 		for (int j = -(m_size - 1) / 2; j<(m_size - 1) / 2; j++)
 		{
 			//top
-			m_vertices[vert].Color = Color(0.0f, 0.0f, 5.0f, 1.0f);
-			m_vertices[vert++].Pos = Vector3((float)i, 0.5f * (float)(m_size - 1), (float)j);
-			m_vertices[vert].Color = Color(0.0f, 0.0f, 5.0f, 1.0f);
-			m_vertices[vert++].Pos = Vector3((float)i, 0.5f * (float)(m_size - 1), (float)(j + 1));
-			m_vertices[vert].Color = Color(0.0f, 0.0f, 5.0f, 1.0f);
-			m_vertices[vert++].Pos = Vector3((float)(i + 1), 0.5f * (float)(m_size - 1), (float)j);
+			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, 1.0f);
+			m_vertices[vert++].Pos = Vector3((float)i, startHeight * (float)(m_size - 1), (float)j);
+			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, 1.0f);
+			m_vertices[vert++].Pos = Vector3((float)i, startHeight * (float)(m_size - 1), (float)(j + 1));
+			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, 1.0f);
+			m_vertices[vert++].Pos = Vector3((float)(i + 1), startHeight * (float)(m_size - 1), (float)j);
 
 			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, 1.0f);
-			m_vertices[vert++].Pos = Vector3((float)(i + 1), 0.5f * (float)(m_size - 1), (float)j);
+			m_vertices[vert++].Pos = Vector3((float)(i + 1), startHeight * (float)(m_size - 1), (float)j);
 			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, 1.0f);
-			m_vertices[vert++].Pos = Vector3((float)i, 0.5f * (float)(m_size - 1), (float)(j + 1));
+			m_vertices[vert++].Pos = Vector3((float)i, startHeight * (float)(m_size - 1), (float)(j + 1));
 			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, 1.0f);
-			m_vertices[vert++].Pos = Vector3((float)(i + 1), 0.5f * (float)(m_size - 1), (float)(j + 1));
+			m_vertices[vert++].Pos = Vector3((float)(i + 1), startHeight  * (float)(m_size - 1), (float)(j + 1));
 		}
 	}
 
@@ -99,14 +106,47 @@ void VBPlane::Tick(GameData* _GD)
 }
 
 void VBPlane::Transform(GameData* _GD)
-{
-	changeMe += _GD->dt *1.0f;
-	float Amp = 0.5f;
-	float freq =(2 * XM_PI);
+{	
+	time += _GD->dt *1.0f;
+
+	if (_GD->keyboard[DIK_I] & 0x80)
+	{
+		Amp += _GD->dt *5.0f;
+	}
+	if (_GD->keyboard[DIK_K] & 0x80)
+	{
+		Amp -= _GD->dt *5.0f;
+	}
+
+	if ((_GD->keyboard[DIK_J])/* && !(_GD->prevKeyboard[DIK_J])*/)
+	{
+		freq += _GD->dt *1.0f;
+		//freq++;
+	}
+	if ((_GD->keyboard[DIK_L])/* && !(_GD->prevKeyboard[DIK_L])*/)
+	{
+		freq -= _GD->dt *1.0f;
+		//freq--;
+	}
+
+	if (_GD->keyboard[DIK_O] & 0x80)
+	{
+		changeMe += _GD->dt *1.0f;
+		//changeMe++;
+		//changeMe = 5.0f;
+	}
+	if (_GD->keyboard[DIK_P] & 0x80)
+	{
+		changeMe += _GD->dt *1.0f;
+		//changeMe--;
+		//changeMe = 500.0f;
+	}
+
 
 	for (int i = 0; i < m_numPrims * 3; i++)
 	{
-		m_vertices[i].Pos.y = Amp*(sin(freq * changeMe + m_vertices[i].Pos.x));
+		//Mate, add + (m_vertices[i].Pos.z*changeMe) to the end and get some wicked shit
+		m_vertices[i].Pos.y = Amp*(sin((freq*(2 * XM_PI)* time + m_vertices[i].Pos.x + (m_vertices[i].Pos.z*changeMe))));
 	}
 	
 }

@@ -23,7 +23,12 @@ protected:
 
 	int numVerts;
 	int m_size;
+
 	float changeMe;
+	float time;
+	float Amp;
+	float freq;
+
 	int m_numVertices;
 	myVertex* m_vertices;
 };
