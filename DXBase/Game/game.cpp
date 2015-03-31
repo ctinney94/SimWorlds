@@ -236,18 +236,20 @@ void Game::render(ID3D11DeviceContext* _pd3dImmediateContext)
 		(*it)->Draw(m_DD);
 	}
 
-	
-	char number[10];
-	itoa(10, number, 10); 
-	string attempt = "Test Message " + string(number);
+	vector<string> messages;
+	messages.push_back("I/K +- amp");
+	messages.push_back("J/L +- freq");
+	messages.push_back("O/P +- changeMe");
 
-	// Draw sprite batch stuff
 	m_DD2D->m_Sprites->Begin();
 	for (list<GameObject2D *>::iterator it = m_GameObject2Ds.begin(); it != m_GameObject2Ds.end(); it++)
 	{
 		(*it)->draw(m_DD2D);
 	}
-	m_DD2D->m_Font->DrawString(m_DD2D->m_Sprites.get(), Helper::charToWChar(attempt.c_str()), Vector2(100, 10), Colors::Yellow);
+	for (int i = 0; i < messages.size(); i++)
+	{
+			m_DD2D->m_Font->DrawString(m_DD2D->m_Sprites.get(), Helper::charToWChar(messages[i].c_str()), Vector2(100, 50 + (50 * i)), Colors::Yellow);
+	}
 	m_DD2D->m_Sprites->End();
 
 	_pd3dImmediateContext->OMSetDepthStencilState(m_States->DepthDefault(), 0);

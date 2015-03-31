@@ -11,23 +11,24 @@ public:
 	VBPlane();
 	virtual ~VBPlane(){ delete[] m_vertices;};
 
-	//initialise the Veretx and Index buffers for the cube
+	//initialize the Vertex and Index buffers for the cube
 	void init(int _size, ID3D11Device* _GD);
 	void Draw(DrawData* _DD);
 	void Tick(GameData* _GD);
 
 protected:
 	//this is to allow custom versions of this which create the basic cube and then distort it
-	//see Spirla, SpikedVB and Pillow
+	//see Spiral, SpikedVB and Pillow
 	void Transform(GameData* _GD);
+	void input(GameData* _GD);
 
 	int numVerts;
 	int m_size;
 
-	float changeMe;
+	float changeMe = -0.75f;
 	float time;
-	float Amp;
-	float freq;
+	float Amp = 1.44f;
+	float freq = 0.4f;
 
 	int m_numVertices;
 	myVertex* m_vertices;

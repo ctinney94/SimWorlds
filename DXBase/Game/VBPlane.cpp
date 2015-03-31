@@ -30,7 +30,7 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 	
 	float startHeight = 0.5f;
 
-	//in each loop create the two traingles for the matching sub-square on each of the six faces
+	//in each loop create the two triangles for the matching sub-square on each of the six faces
 	int vert = 0;
 	for (int i = -(m_size - 1) / 2; i<(m_size - 1) / 2; i++)
 	{
@@ -53,7 +53,7 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 		}
 	}
 
-	//carry out some kind of transform on these vertices to make this object more interesting
+	//carry out some kind of transform on these vertices's to make this object more interesting
 	//calculate the normals for the basic lighting in the base shader
 	for (int i = 0; i < m_numPrims; i++)
 	{
@@ -106,9 +106,38 @@ void VBPlane::Tick(GameData* _GD)
 }
 
 void VBPlane::Transform(GameData* _GD)
-{	
+{
 	time += _GD->dt *1.0f;
+	input(_GD);
 
+	/*for (int i = 0; i < m_numPrims * 3; i++)
+	{
+		if (i >((m_numPrims * 3) / 8));
+		{
+			float sinX = Amp*(sin((freq*(2 * XM_PI)* time + m_vertices[i].Pos.x + (m_vertices[i].Pos.x*changeMe))));
+			float sinZ = Amp*(sin((freq*(2 * XM_PI)* time + m_vertices[i].Pos.z + (m_vertices[i].Pos.z*changeMe))));
+			m_vertices[i].Pos.y = sinX * sinZ;
+		}
+	}*/
+
+	Vector3 origin = Vector3(0.0f, 0.0f, 0.0f);
+	m_vertices[1000].Pos.y = 1.0f;
+	float dropoff = 0.00001f;
+	for (int i = 0; i < m_size; i++)
+	{
+		for (int j = 0; j < m_size; j++)
+		{
+			m_vertices[j*m_size + i-1].Pos.y = m_vertices[j*m_size + i].Pos.y + dropoff;
+			m_vertices[j*m_size + i+1].Pos.y = m_vertices[j*m_size + i].Pos.y - dropoff;
+			dropoff = dropoff - 0.000001f;
+			//i*m_size + j
+		}
+	}
+
+}
+
+void VBPlane::input(GameData* _GD)
+{
 	if (_GD->keyboard[DIK_I] & 0x80)
 	{
 		Amp += _GD->dt *5.0f;
@@ -121,32 +150,19 @@ void VBPlane::Transform(GameData* _GD)
 	if ((_GD->keyboard[DIK_J])/* && !(_GD->prevKeyboard[DIK_J])*/)
 	{
 		freq += _GD->dt *1.0f;
-		//freq++;
 	}
 	if ((_GD->keyboard[DIK_L])/* && !(_GD->prevKeyboard[DIK_L])*/)
 	{
 		freq -= _GD->dt *1.0f;
-		//freq--;
 	}
 
 	if (_GD->keyboard[DIK_O] & 0x80)
 	{
 		changeMe += _GD->dt *1.0f;
-		//changeMe++;
-		//changeMe = 5.0f;
 	}
 	if (_GD->keyboard[DIK_P] & 0x80)
 	{
-		changeMe += _GD->dt *1.0f;
-		//changeMe--;
-		//changeMe = 500.0f;
+		changeMe -= _GD->dt *1.0f;
 	}
 
-
-	for (int i = 0; i < m_numPrims * 3; i++)
-	{
-		//Mate, add + (m_vertices[i].Pos.z*changeMe) to the end and get some wicked shit
-		m_vertices[i].Pos.y = Amp*(sin((freq*(2 * XM_PI)* time + m_vertices[i].Pos.x + (m_vertices[i].Pos.z*changeMe))));
-	}
-	
 }
