@@ -71,56 +71,20 @@ Game::Game(ID3D11Device* _pd3dDevice, HINSTANCE _hInstance) :m_playTime(0), m_my
 	m_GameObjects.push_back(m_Light);
 
 	VBPlane* plane = new  VBPlane();
-	plane->init(40, _pd3dDevice);
+	plane->init(100, _pd3dDevice);
 	plane->SetPos(Vector3(0.0f, 0.0f, 0.0f));
-	plane->SetScale(10.0f);
+	plane->SetScale(4.0f);
 	m_GameObjects.push_back(plane);
 
 	VBCube* cube = new VBCube();
 	cube->init(35, _pd3dDevice);
 	cube->SetPos(Vector3(100.0f, 0.0f, 0.0f));
 	m_GameObjects.push_back(cube);
-
-	/*FileVBGO* terrainBox = new FileVBGO("../Assets/terrainTex.txt", _pd3dDevice);
-	m_GameObjects.push_back(terrainBox);
-
-	FileVBGO* Box = new FileVBGO("../Assets/cube.txt", _pd3dDevice);
-	m_GameObjects.push_back(Box);
-	Box->SetPos(Vector3(0.0f, 0.0f, -100.0f));
-	Box->SetPitch( XM_PIDIV4 );
-	Box->SetScale( 20.0f );
-
-	SpikedVB* spikes = new SpikedVB();
-	spikes->init(11, _pd3dDevice);
-	spikes->SetPos(Vector3(0.0f, 0.0f, 100.0f));
-	spikes->SetScale(4.0f);
-	m_GameObjects.push_back(spikes);
-
-	Spiral* spiral = new Spiral();
-	spiral->init(11, _pd3dDevice);
-	spiral->SetPos(Vector3(-100.0f, 0.0f, 0.0f));
-	spiral->SetScale(4.0f);
-	m_GameObjects.push_back(spiral);
-
-	Pillow* pillow = new Pillow();
-	pillow->init(11, _pd3dDevice);
-	pillow->SetPos( Vector3(-100.0f, 0.0f, -100.0f) );
-	pillow->SetScale(4.0f);
-	m_GameObjects.push_back(pillow);
-
-	Snail* snail = new Snail(_pd3dDevice, "../Assets/baseline.txt", 150, 0.98, 0.09f * XM_PI , 0.4f, Color(1.0f, 0.0f, 0.0f, 1.0f), Color(0.0f, 0.0f, 1.0f, 1.0f));
-	snail->SetPos(Vector3(-100.0f, 0.0f, 100.0f));
-	snail->SetScale(2.0f);
-	m_GameObjects.push_back(snail);
-
-	GameObject2D* logo = new GameObject2D("logo", _pd3dDevice);
-	logo->SetPos(200.0f * Vector2::One);
-	m_GameObject2Ds.push_back(logo);*/
-	
+		
 	ID3D11DeviceContext* pd3dImmediateContext;
 	_pd3dDevice->GetImmediateContext(&pd3dImmediateContext);
 	
-	// Create DirectXTK spritebatch stuff
+	// Create DirectXTK sprite batch stuff
 	m_DD2D = new DrawData2D();
 	m_DD2D->m_Sprites.reset(new SpriteBatch(pd3dImmediateContext));
 	m_DD2D->m_Font.reset(new SpriteFont(_pd3dDevice, L"italic.spritefont"));
@@ -237,6 +201,7 @@ void Game::render(ID3D11DeviceContext* _pd3dImmediateContext)
 	}
 
 	vector<string> messages;
+	messages.push_back("TAB toggle between sin waves and verlet waves");
 	messages.push_back("I/K +- amp");
 	messages.push_back("J/L +- freq");
 	messages.push_back("O/P +- changeMe");
@@ -248,7 +213,7 @@ void Game::render(ID3D11DeviceContext* _pd3dImmediateContext)
 	}
 	for (int i = 0; i < messages.size(); i++)
 	{
-			m_DD2D->m_Font->DrawString(m_DD2D->m_Sprites.get(), Helper::charToWChar(messages[i].c_str()), Vector2(100, 50 + (50 * i)), Colors::Yellow);
+		m_DD2D->m_Font->DrawString(m_DD2D->m_Sprites.get(), Helper::charToWChar(messages[i].c_str()), Vector2(15, 10+(25 * i)), Colors::Yellow, 0.0f, Vector3::Zero, Vector3(0.5f, 0.5f, 0.5f));
 	}
 	m_DD2D->m_Sprites->End();
 

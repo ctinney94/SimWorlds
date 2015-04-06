@@ -25,10 +25,13 @@ protected:
 	int numVerts;
 	int m_size;
 
-	float changeMe = -0.75f;
+	float waveScale = -0.75f;//THIS IS THE SCALE OF THE WAVE
 	float time;
 	float Amp = 1.44f;
 	float freq = 0.4f;
+	float opactity = 0.3f;
+
+	int waveType = 0;
 
 	int m_numVertices;
 	myVertex* m_vertices;

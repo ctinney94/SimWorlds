@@ -4,7 +4,7 @@
 
 VBPlane::VBPlane()
 {
-	changeMe = 0;
+	waveScale = 0;
 	time = 0;
 	Amp = 0.5f;
 	freq = 0.0f;
@@ -15,7 +15,7 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 	m_size = _size;
 
 	//calculate number of vertices and primatives
-	numVerts = 6 * 6 * (m_size - 1) * (m_size - 1);
+	numVerts = 6 * (m_size - 1) * (m_size - 1);
 	m_numPrims = numVerts / 3;
 	m_numVertices = numVerts;
 	m_vertices = new myVertex[numVerts];
@@ -37,18 +37,18 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 		for (int j = -(m_size - 1) / 2; j<(m_size - 1) / 2; j++)
 		{
 			//top
-			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, 1.0f);
+			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, opactity);
 			m_vertices[vert++].Pos = Vector3((float)i, startHeight * (float)(m_size - 1), (float)j);
-			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, 1.0f);
+			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, opactity);
 			m_vertices[vert++].Pos = Vector3((float)i, startHeight * (float)(m_size - 1), (float)(j + 1));
-			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, 1.0f);
+			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, opactity);
 			m_vertices[vert++].Pos = Vector3((float)(i + 1), startHeight * (float)(m_size - 1), (float)j);
 
-			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, 1.0f);
+			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, opactity);
 			m_vertices[vert++].Pos = Vector3((float)(i + 1), startHeight * (float)(m_size - 1), (float)j);
-			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, 1.0f);
+			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, opactity);
 			m_vertices[vert++].Pos = Vector3((float)i, startHeight * (float)(m_size - 1), (float)(j + 1));
-			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, 1.0f);
+			m_vertices[vert].Color = Color(0.0f, 0.0f, 1.0f, opactity);
 			m_vertices[vert++].Pos = Vector3((float)(i + 1), startHeight  * (float)(m_size - 1), (float)(j + 1));
 		}
 	}
@@ -71,6 +71,17 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 		m_vertices[V1].Norm = norm;
 		m_vertices[V2].Norm = norm;
 		m_vertices[V3].Norm = norm;
+	}
+
+	//Do an initial transform
+	for (int i = 0; i < m_numPrims * 3; i++)
+	{
+		if (i >((m_numPrims * 3) / 8));
+		{
+			float sinX = Amp*(sin((freq*(2 * XM_PI)* time + m_vertices[i].Pos.x + (m_vertices[i].Pos.x*waveScale))));
+			float sinZ = Amp*(sin((freq*(2 * XM_PI)* time + m_vertices[i].Pos.z + (m_vertices[i].Pos.z*waveScale))));
+			m_vertices[i].Pos.y = sinX * sinZ;
+		}
 	}
 
 	BuildIB(GD, indices);
@@ -110,59 +121,64 @@ void VBPlane::Transform(GameData* _GD)
 	time += _GD->dt *1.0f;
 	input(_GD);
 
-	/*for (int i = 0; i < m_numPrims * 3; i++)
-	{
-		if (i >((m_numPrims * 3) / 8));
-		{
-			float sinX = Amp*(sin((freq*(2 * XM_PI)* time + m_vertices[i].Pos.x + (m_vertices[i].Pos.x*changeMe))));
-			float sinZ = Amp*(sin((freq*(2 * XM_PI)* time + m_vertices[i].Pos.z + (m_vertices[i].Pos.z*changeMe))));
-			m_vertices[i].Pos.y = sinX * sinZ;
-		}
-	}*/
-
-	Vector3 origin = Vector3(0.0f, 0.0f, 0.0f);
-	m_vertices[1000].Pos.y = 1.0f;
 	float dropoff = 0.00001f;
-	for (int i = 0; i < m_size; i++)
-	{
-		for (int j = 0; j < m_size; j++)
-		{
-			m_vertices[j*m_size + i-1].Pos.y = m_vertices[j*m_size + i].Pos.y + dropoff;
-			m_vertices[j*m_size + i+1].Pos.y = m_vertices[j*m_size + i].Pos.y - dropoff;
-			dropoff = dropoff - 0.000001f;
-			//i*m_size + j
-		}
-	}
 
+	switch (waveType)
+	{
+	case 1:
+		for (int i = 0; i < m_numPrims * 3; i++)
+		{
+			if (i >((m_numPrims * 3) / 8));
+			{
+				float sinX = Amp*(sin((freq*(2 * XM_PI)* time + m_vertices[i].Pos.x + (m_vertices[i].Pos.x*waveScale))));
+				float sinZ = Amp*(sin((freq*(2 * XM_PI)* time + m_vertices[i].Pos.z + (m_vertices[i].Pos.z*waveScale))));
+				m_vertices[i].Pos.y = sinX * sinZ;
+			}
+		}
+		break;
+	case 2:
+		for (int i = 0; i < m_size; i++)
+		{
+			for (int j = 0; j < m_size; j++)
+			{
+				m_vertices[j*m_size + i - 1].Pos.y = m_vertices[j*m_size + i].Pos.y + dropoff;
+				m_vertices[j*m_size + i + 1].Pos.y = m_vertices[j*m_size + i].Pos.y - dropoff;
+				//i*m_size + j
+			}
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 void VBPlane::input(GameData* _GD)
 {
+
+	if (_GD->keyboard[DIK_TAB] && !_GD->prevKeyboard[DIK_TAB])
+	{
+		waveType++;
+		if (waveType > 2)
+			waveType = 0;
+	}
+
 	if (_GD->keyboard[DIK_I] & 0x80)
 	{
 		Amp += _GD->dt *5.0f;
 	}
 	if (_GD->keyboard[DIK_K] & 0x80)
-	{
 		Amp -= _GD->dt *5.0f;
-	}
 
 	if ((_GD->keyboard[DIK_J])/* && !(_GD->prevKeyboard[DIK_J])*/)
-	{
 		freq += _GD->dt *1.0f;
-	}
+
 	if ((_GD->keyboard[DIK_L])/* && !(_GD->prevKeyboard[DIK_L])*/)
-	{
 		freq -= _GD->dt *1.0f;
-	}
 
 	if (_GD->keyboard[DIK_O] & 0x80)
-	{
-		changeMe += _GD->dt *1.0f;
-	}
+		waveScale += _GD->dt *1.0f;
+
 	if (_GD->keyboard[DIK_P] & 0x80)
-	{
-		changeMe -= _GD->dt *1.0f;
-	}
+		waveScale -= _GD->dt *1.0f;
 
 }
