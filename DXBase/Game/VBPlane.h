@@ -5,10 +5,12 @@
 #include "drawdata.h"
 #include "GameData.h"
 
+#include <vector>
+
 class VBPlane : public VBGO
 {
 public:
-	VBPlane();
+	VBPlane(){};
 	virtual ~VBPlane(){ delete[] m_vertices;};
 
 	//initialize the Vertex and Index buffers for the cube
@@ -22,13 +24,16 @@ protected:
 	void Transform(GameData* _GD);
 	void input(GameData* _GD);
 
+	int getVertPos(int x, int y);
+
 	int numVerts;
 	int m_size;
+	std::vector<float> prevPostions;
 
-	float waveScale = -0.75f;//THIS IS THE SCALE OF THE WAVE
-	float time;
-	float Amp = 1.44f;
-	float freq = 0.4f;
+	float waveScale = -0.85f;//THIS IS THE SCALE OF THE WAVE
+	float time = 0.0f;
+	float Amp = 2.0f;
+	float freq = -0.5f;
 	float opactity = 0.3f;
 
 	int waveType = 0;

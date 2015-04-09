@@ -2,13 +2,13 @@
 #include <dinput.h>
 #include "gamedata.h"
 
-VBPlane::VBPlane()
+/*VBPlane::VBPlane()
 {
 	waveScale = 0;
 	time = 0;
 	Amp = 0.5f;
 	freq = 0.0f;
-}
+}*/
 
 void VBPlane::init(int _size, ID3D11Device* GD)
 {
@@ -84,6 +84,14 @@ void VBPlane::init(int _size, ID3D11Device* GD)
 		}
 	}
 
+	for (int i = 0; i < m_size; i++)
+	{
+		for (int j = 0; j < m_size; j++)
+		{
+			prevPostions.push_back(m_vertices[getVertPos(i, j)].Pos.y);
+		}
+	}
+
 	BuildIB(GD, indices);
 	//BuildVB(GD, numVerts, m_vertices);
 	BuildDVB(GD, numVerts, m_vertices);
@@ -125,7 +133,7 @@ void VBPlane::Transform(GameData* _GD)
 
 	switch (waveType)
 	{
-	case 1:
+	case 0:
 		for (int i = 0; i < m_numPrims * 3; i++)
 		{
 			if (i >((m_numPrims * 3) / 8));
@@ -136,13 +144,18 @@ void VBPlane::Transform(GameData* _GD)
 			}
 		}
 		break;
-	case 2:
+	case 1:
 		for (int i = 0; i < m_size; i++)
 		{
 			for (int j = 0; j < m_size; j++)
 			{
-				m_vertices[j*m_size + i - 1].Pos.y = m_vertices[j*m_size + i].Pos.y + dropoff;
-				m_vertices[j*m_size + i + 1].Pos.y = m_vertices[j*m_size + i].Pos.y - dropoff;
+
+				float currentPos = m_vertices[getVertPos(i, j)].Pos.y;
+				m_vertices[getVertPos(i, j)].Pos.y = 2 * (currentPos)-prevPostions[getVertPos(i, j)] + ((Amp * currentPos )*( _GD->dt* _GD->dt));
+				//Next pos = 2*(current pos) - previous pos + A (current pos) * delta-time^2
+				prevPostions.push_back(m_vertices[getVertPos(i, j)].Pos.y);
+
+				//m_vertices[j*m_size + i - 1].Pos.y = m_vertices[j*m_size + i].Pos.y + dropoff;
 				//i*m_size + j
 			}
 		}
@@ -152,13 +165,19 @@ void VBPlane::Transform(GameData* _GD)
 	}
 }
 
+int VBPlane::getVertPos(int x, int y)
+{
+	int temp = (x*(m_size - 1)*2) + y;
+	return temp;
+}
+
 void VBPlane::input(GameData* _GD)
 {
 
 	if (_GD->keyboard[DIK_TAB] && !_GD->prevKeyboard[DIK_TAB])
 	{
 		waveType++;
-		if (waveType > 2)
+		if (waveType > 1)
 			waveType = 0;
 	}
 
