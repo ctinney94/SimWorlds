@@ -70,17 +70,27 @@ Game::Game(ID3D11Device* _pd3dDevice, HINSTANCE _hInstance) :m_playTime(0), m_my
 	m_Light = new Light(Vector3(0.0f, 100.0f, 160.0f), Color(1.0f, 1.0f, 1.0f, 1.0f), Color(0.4f, 0.1f, 0.1f, 1.0f));
 	m_GameObjects.push_back(m_Light);
 
-	VBPlane* plane = new  VBPlane();
-	plane->init(100, _pd3dDevice);
-	plane->SetPos(Vector3(0.0f, 0.0f, 0.0f));
-	plane->SetScale(4.0f);
-	m_GameObjects.push_back(plane);
-
+	//Make a box for our water to sit in.
 	VBCube* cube = new VBCube();
+	cube->cull = true;
 	cube->init(35, _pd3dDevice);
-	cube->SetPos(Vector3(100.0f, 0.0f, 0.0f));
+	cube->SetScale(11.65f);
+	cube->SetPos(Vector3(0.0f, -150.0f, 0.0f));
 	m_GameObjects.push_back(cube);
-		
+	VBCube* cube2 = new VBCube();
+	cube2->cull = false;
+	cube2->init(35, _pd3dDevice);
+	cube2->SetScale(11.65f);
+	cube2->SetPos(Vector3(0.0f, -150.0f, 0.0f));
+	m_GameObjects.push_back(cube2);
+
+	//Make our water!
+	WaterSurface* water = new WaterSurface();
+	water->init(100, _pd3dDevice);
+	water->SetPos(Vector3(0.0f, 0.0f, 0.0f));
+	water->SetScale(4.0f);
+	m_GameObjects.push_back(water);
+			
 	ID3D11DeviceContext* pd3dImmediateContext;
 	_pd3dDevice->GetImmediateContext(&pd3dImmediateContext);
 	

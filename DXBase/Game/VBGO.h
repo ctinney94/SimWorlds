@@ -61,14 +61,13 @@ protected:
 	ID3D11RasterizerState*  m_pRasterState;
 
 	//once populated build an Index Buffer
-	void BuildIB(ID3D11Device* _GD,void* _indices);
+	void BuildIB(ID3D11Device* _GD, void* _indices);
 
 	//once populated build a Vertex Buffer
 	void BuildVB(ID3D11Device* _GD, int _numVerts, void* _vertices);
 
 	//Build a DYNAMIC vertex buffer! Ooooh!
 	void BuildDVB(ID3D11Device* _GD, int _numVerts, void* _vertices);
-
 };
 
 #endif

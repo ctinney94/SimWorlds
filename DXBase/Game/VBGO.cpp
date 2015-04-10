@@ -14,20 +14,20 @@
 using namespace DirectX;
 
 //default vertexshader
-ID3D11VertexShader*			VBGO::s_pVertexShader	= nullptr;
+ID3D11VertexShader*			VBGO::s_pVertexShader = nullptr;
 //default vertex layout
-ID3D11InputLayout*			VBGO::s_pVertexLayout	= nullptr;
+ID3D11InputLayout*			VBGO::s_pVertexLayout = nullptr;
 //default pixelshader
-ID3D11PixelShader*			VBGO::s_pPixelShader	= nullptr;
+ID3D11PixelShader*			VBGO::s_pPixelShader = nullptr;
 //default texture (white square)
-ID3D11ShaderResourceView*	VBGO::s_pTextureRV		= nullptr;
+ID3D11ShaderResourceView*	VBGO::s_pTextureRV = nullptr;
 //deafult const buffer
 //GPU side
-ID3D11Buffer*				VBGO::s_pConstantBuffer	= nullptr;
+ID3D11Buffer*				VBGO::s_pConstantBuffer = nullptr;
 //CPU side	
-ConstantBuffer*				VBGO::s_pCB				= nullptr;
+ConstantBuffer*				VBGO::s_pCB = nullptr;
 //default sampler
-ID3D11SamplerState*			VBGO::s_pSampler		= nullptr;
+ID3D11SamplerState*			VBGO::s_pSampler = nullptr;
 //default raster state
 ID3D11RasterizerState*		VBGO::s_pRasterState = nullptr;
 
@@ -38,13 +38,13 @@ VBGO::VBGO()
 	m_IndexBuffer = NULL;
 	m_numPrims = 0;
 
-	m_pVertexShader		= nullptr;
-	m_pVertexLayout		= nullptr;
-	m_pPixelShader		= nullptr;
-	m_pTextureRV		= nullptr;
-	m_pConstantBuffer	= nullptr;
-	m_pCB				= nullptr;
-	m_pSampler			= nullptr;
+	m_pVertexShader = nullptr;
+	m_pVertexLayout = nullptr;
+	m_pPixelShader = nullptr;
+	m_pTextureRV = nullptr;
+	m_pConstantBuffer = nullptr;
+	m_pCB = nullptr;
+	m_pSampler = nullptr;
 	m_pRasterState = nullptr;
 
 	m_topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -57,7 +57,7 @@ VBGO::~VBGO()
 {
 	//BUT WE DO TIDY THEM AWAY
 	if (m_VertexBuffer) m_VertexBuffer->Release();
-	if (m_IndexBuffer) m_IndexBuffer->Release();	
+	if (m_IndexBuffer) m_IndexBuffer->Release();
 	if (m_pVertexShader) m_pVertexShader->Release();
 	if (m_pVertexLayout) m_pVertexLayout->Release();
 	if (m_pPixelShader) m_pPixelShader->Release();
@@ -107,7 +107,7 @@ void VBGO::Draw(DrawData* _DD)
 
 	//set  vertex layout
 	//note that if you do use this you'll need to change the stride and offset above
-	ID3D11InputLayout* useLayout = m_pVertexLayout ? m_pVertexLayout : s_pVertexLayout; 
+	ID3D11InputLayout* useLayout = m_pVertexLayout ? m_pVertexLayout : s_pVertexLayout;
 	_DD->pd3dImmediateContext->IASetInputLayout(useLayout);
 
 	//set Vertex Shader
@@ -176,7 +176,7 @@ void VBGO::Init(ID3D11Device* _GD)
 	//default vertex layout
 	_GD->CreateInputLayout(myVertexLayout, ARRAYSIZE(myVertexLayout), pVertexShaderBuffer->GetBufferPointer(),
 		pVertexShaderBuffer->GetBufferSize(), &s_pVertexLayout);
-	
+
 	//default texture (white square)
 	hr = CreateDDSTextureFromFile(_GD, L"../Debug/white.dds", nullptr, &s_pTextureRV);
 
@@ -210,6 +210,7 @@ void VBGO::Init(ID3D11Device* _GD)
 
 	//Setup Raster State
 	D3D11_RASTERIZER_DESC rasterDesc;
+
 	rasterDesc.AntialiasedLineEnable = false;
 	rasterDesc.CullMode = D3D11_CULL_BACK;
 	rasterDesc.DepthBias = 0;
@@ -220,6 +221,7 @@ void VBGO::Init(ID3D11Device* _GD)
 	rasterDesc.MultisampleEnable = false;
 	rasterDesc.ScissorEnable = false;
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
+
 
 	// Create the rasterizer state from the description we just filled out.
 	hr = _GD->CreateRasterizerState(&rasterDesc, &s_pRasterState);

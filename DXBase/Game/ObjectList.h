@@ -17,5 +17,6 @@
 #include "pillow.h"
 #include "snail.h"
 #include "VBPlane.h"
+#include "WaterSurface.h"
 
 #endif

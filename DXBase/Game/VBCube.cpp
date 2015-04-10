@@ -23,7 +23,7 @@ void VBCube::init(int _size, ID3D11Device* GD)
 	{
 		for (int j = -(m_size - 1) / 2; j<(m_size - 1) / 2; j++)
 		{
-			//top
+			/*//top
 			m_vertices[vert].Color = Color(1.0f, 0.0f, 0.0f, 1.0f);
 			m_vertices[vert++].Pos = Vector3((float)i, 0.5f * (float)(m_size - 1), (float)j);
 			m_vertices[vert].Color = Color(1.0f, 0.0f, 0.0f, 1.0f);
@@ -37,7 +37,7 @@ void VBCube::init(int _size, ID3D11Device* GD)
 			m_vertices[vert++].Pos = Vector3((float)i, 0.5f * (float)(m_size - 1), (float)(j + 1));
 			m_vertices[vert].Color = Color(1.0f, 0.0f, 0.0f, 1.0f);
 			m_vertices[vert++].Pos = Vector3((float)(i + 1), 0.5f * (float)(m_size - 1), (float)(j + 1));
-
+			*/
 			//back
 			m_vertices[vert].Color = Color(0.0f, 1.0f, 0.0f, 1.0f);
 			m_vertices[vert++].Pos = Vector3((float)i, (float)j, 0.5f * (float)(m_size - 1));
@@ -137,6 +137,29 @@ void VBCube::init(int _size, ID3D11Device* GD)
 		m_vertices[V2].Norm = norm;
 		m_vertices[V3].Norm = norm;
 	}
+
+
+	HRESULT hr;
+	//Setup Raster State
+	D3D11_RASTERIZER_DESC rasterDesc;
+	rasterDesc.AntialiasedLineEnable = false;
+
+	if (cull)
+		rasterDesc.CullMode = D3D11_CULL_BACK;
+	else
+		rasterDesc.CullMode = D3D11_CULL_FRONT;
+
+	rasterDesc.DepthBias = 0;
+	rasterDesc.DepthBiasClamp = 0.0f;
+	rasterDesc.DepthClipEnable = true;
+	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.FrontCounterClockwise = true;
+	rasterDesc.MultisampleEnable = false;
+	rasterDesc.ScissorEnable = false;
+	rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+	// Create the rasterizer state from the description we just filled out.
+	hr = GD->CreateRasterizerState(&rasterDesc, &m_pRasterState);
 
 
 	BuildIB(GD, indices);

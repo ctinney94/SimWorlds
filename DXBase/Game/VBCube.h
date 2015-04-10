@@ -9,8 +9,9 @@ class VBCube : public VBGO
 {
 public:
 	VBCube(){};
-	virtual ~VBCube(){};
 
+	bool cull;
+	virtual ~VBCube(){};
 	//initialise the Veretx and Index buffers for the cube
 	void init(int _size, ID3D11Device* _GD);
 

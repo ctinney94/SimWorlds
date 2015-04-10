@@ -106,6 +106,9 @@
     <ClInclude Include="VBPlane.h">
       <Filter>Engine\GameObject Headers</Filter>
     </ClInclude>
+    <ClInclude Include="WaterSurface.h">
+      <Filter>Engine\GameObject Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tutorial01.rc">
@@ -156,6 +159,9 @@
       <Filter>Engine\GameObject Source</Filter>
     </ClCompile>
     <ClCompile Include="VBPlane.cpp">
+      <Filter>Engine\GameObject Source</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterSurface.cpp">
       <Filter>Engine\GameObject Source</Filter>
     </ClCompile>
   </ItemGroup>
