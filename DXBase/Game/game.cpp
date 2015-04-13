@@ -54,13 +54,10 @@ Game::Game(ID3D11Device* _pd3dDevice, HINSTANCE _hInstance) :m_playTime(0), m_my
 
 	//create a base camera
 	m_cam = new Camera(0.25f * XM_PI, 640.0f / 480.0f, 1.0f, 10000.0f, Vector3::Zero, Vector3::UnitY);
-	m_cam->SetPos( Vector3(0.0f, 300.0f,300.0f) );
+	m_cam->SetPos( Vector3(0.0f, 450.0f,350.0f) );
 	m_GameObjects.push_back(m_cam);
 
-	/*Terrain* terrain = new Terrain("table.cmo", _pd3dDevice, m_myEF,Vector3(100.0f,0.0f,100.0f), 0.0f, 0.0f, 0.0f, 0.25f * Vector3::One);
-	m_GameObjects.push_back(terrain);*/
-
-	Turret_Base* base = new Turret_Base("treasure_chest.cmo", _pd3dDevice, m_myEF);
+	base = new Turret_Base("treasure_chest.cmo", _pd3dDevice, m_myEF);
 	m_GameObjects.push_back(base);
 	base->SetPos(Vector3(100.0f, 0.0f, -100.0f));
 
@@ -85,19 +82,21 @@ Game::Game(ID3D11Device* _pd3dDevice, HINSTANCE _hInstance) :m_playTime(0), m_my
 	m_GameObjects.push_back(cube2);
 
 	//Make our water!
-	WaterSurface* water = new WaterSurface();
+	water = new WaterSurface();
 	water->init(100, _pd3dDevice);
-	water->SetPos(Vector3(0.0f, 0.0f, 0.0f));
+	water->SetPos(Vector3(-198.0f, 0.0f, -198.0f));
 	water->SetScale(4.0f);
 	m_GameObjects.push_back(water);
-			
+		
+	water->boat = base;
+
 	ID3D11DeviceContext* pd3dImmediateContext;
 	_pd3dDevice->GetImmediateContext(&pd3dImmediateContext);
 	
 	// Create DirectXTK sprite batch stuff
 	m_DD2D = new DrawData2D();
 	m_DD2D->m_Sprites.reset(new SpriteBatch(pd3dImmediateContext));
-	m_DD2D->m_Font.reset(new SpriteFont(_pd3dDevice, L"italic.spritefont"));
+	m_DD2D->m_Font.reset(new SpriteFont(_pd3dDevice, L"consolas.spritefont"));
 		
 	//create Draw Data
 	m_DD = new DrawData();
@@ -211,10 +210,30 @@ void Game::render(ID3D11DeviceContext* _pd3dImmediateContext)
 	}
 
 	vector<string> messages;
-	messages.push_back("TAB toggle between sin waves and verlet waves");
+	messages.push_back("Press TAB to toggle between sin waves and verlet waves");
 	messages.push_back("I/K +- amp");
 	messages.push_back("J/L +- freq");
-	messages.push_back("O/P +- changeMe");
+	messages.push_back("O/P +- WaveScale");
+	messages.push_back("Press F to make a ripple in verlet mode");
+	messages.push_back("N/M +- Diffusion multiplier");
+	messages.push_back("V/B +- Damp");
+	messages.push_back("Z/X +- Colour Threshold");
+	messages.push_back("Press R to reset verlet mode");
+	messages.push_back("Press T to toggle rain");
+	if (water->rain)
+		messages.push_back("G/H +- Rain probability");
+	vector<string> data;
+	data.push_back(to_string(water->Amp));
+	data.push_back(to_string(water->freq));
+	data.push_back(to_string(water->waveScale));
+	data.push_back("");
+	data.push_back(to_string(water->diffMultiplier));
+	data.push_back(to_string(water->damp));
+	data.push_back(to_string(water->ColourTheshold));
+	data.push_back("");
+	data.push_back("Rain: " + to_string(water->rain));
+	if (water->rain)
+		data.push_back(to_string(water->rainProb));
 
 	m_DD2D->m_Sprites->Begin();
 	for (list<GameObject2D *>::iterator it = m_GameObject2Ds.begin(); it != m_GameObject2Ds.end(); it++)
@@ -223,7 +242,11 @@ void Game::render(ID3D11DeviceContext* _pd3dImmediateContext)
 	}
 	for (int i = 0; i < messages.size(); i++)
 	{
-		m_DD2D->m_Font->DrawString(m_DD2D->m_Sprites.get(), Helper::charToWChar(messages[i].c_str()), Vector2(15, 10+(25 * i)), Colors::Yellow, 0.0f, Vector3::Zero, Vector3(0.5f, 0.5f, 0.5f));
+		m_DD2D->m_Font->DrawString(m_DD2D->m_Sprites.get(), Helper::charToWChar(messages[i].c_str()), Vector2(15, 10 + (25 * i)), Colors::Yellow, 0.0f, Vector3::Zero, Vector3(0.5f, 0.5f, 0.5f));
+	}
+	for (int i = 0; i < data.size(); i++)
+	{
+		m_DD2D->m_Font->DrawString(m_DD2D->m_Sprites.get(), Helper::charToWChar(data[i].c_str()), Vector2(250, 35 + (25 * i)), Colors::Yellow, 0.0f, Vector3::Zero, Vector3(0.5f, 0.5f, 0.5f));
 	}
 	m_DD2D->m_Sprites->End();
 

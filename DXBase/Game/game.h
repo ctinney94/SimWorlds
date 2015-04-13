@@ -19,6 +19,8 @@ class GameObject2D;
 class Camera;
 class Light;
 class TPSCamera;
+class Turret_Base;
+class WaterSurface;
 struct GameData;
 struct DrawData;
 struct DrawData2D;
@@ -31,7 +33,6 @@ public:
 	~Game();
 
 	bool update(); //tick the game state
-
 	void render(ID3D11DeviceContext* pd3dImmediateContext); //render the current game state
 
 protected:
@@ -42,7 +43,8 @@ protected:
 
 	Camera* m_cam; //principle camera
 	TPSCamera* m_TPSCam; // TPS camera
-
+	Turret_Base* base;
+	WaterSurface* water;
 	Light* m_Light; //base light
 
 	list<GameObject *> m_GameObjects; //data structure storing all GameOBjects of this Game
@@ -64,7 +66,6 @@ protected:
 	GameData* m_GD;
 	DrawData* m_DD;
 	DrawData2D* m_DD2D;
-	
 };
 
 
