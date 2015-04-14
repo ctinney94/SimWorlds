@@ -1,12 +1,12 @@
-#include "VBCube.h"
+#include "obstacle.h"
 
-void VBCube::init(int _size, ID3D11Device* GD)
+void obstacle::init(int _size, ID3D11Device* _GD)
 {
 	m_size = _size;
-
 	//calculate number of vertices and primatives
 	int numVerts = 6 * 6 * (m_size - 1) * (m_size - 1);
 	m_numPrims = numVerts / 3;
+	m_numVertices = numVerts;
 	m_vertices = new myVertex[numVerts];
 	WORD* indices = new WORD[numVerts];
 
@@ -14,7 +14,7 @@ void VBCube::init(int _size, ID3D11Device* GD)
 	for (int i = 0; i<numVerts; i++)
 	{
 		indices[i] = i;
-		m_vertices[i].texCoord = Vector2::One; 
+		m_vertices[i].texCoord = Vector2::One;
 	}
 
 	//in each loop create the two traingles for the matching sub-square on each of the six faces
@@ -23,7 +23,7 @@ void VBCube::init(int _size, ID3D11Device* GD)
 	{
 		for (int j = -(m_size - 1) / 2; j<(m_size - 1) / 2; j++)
 		{
-			/*//top
+			//top
 			m_vertices[vert].Color = Color(1.0f, 0.0f, 0.0f, 1.0f);
 			m_vertices[vert++].Pos = Vector3((float)i, 0.5f * (float)(m_size - 1), (float)j);
 			m_vertices[vert].Color = Color(1.0f, 0.0f, 0.0f, 1.0f);
@@ -37,7 +37,7 @@ void VBCube::init(int _size, ID3D11Device* GD)
 			m_vertices[vert++].Pos = Vector3((float)i, 0.5f * (float)(m_size - 1), (float)(j + 1));
 			m_vertices[vert].Color = Color(1.0f, 0.0f, 0.0f, 1.0f);
 			m_vertices[vert++].Pos = Vector3((float)(i + 1), 0.5f * (float)(m_size - 1), (float)(j + 1));
-			*/
+			
 			//back
 			m_vertices[vert].Color = Color(0.0f, 1.0f, 0.0f, 1.0f);
 			m_vertices[vert++].Pos = Vector3((float)i, (float)j, 0.5f * (float)(m_size - 1));
@@ -116,9 +116,6 @@ void VBCube::init(int _size, ID3D11Device* GD)
 		}
 	}
 
-	//carry out some kind of transform on these vertices to make this object more interesting
-	Transform();
-
 	//calculate the normals for the basic lighting in the base shader
 	for (int i = 0; i<m_numPrims; i++)
 	{
@@ -138,38 +135,56 @@ void VBCube::init(int _size, ID3D11Device* GD)
 		m_vertices[V3].Norm = norm;
 	}
 
-
-	HRESULT hr;
-	//Setup Raster State
-	D3D11_RASTERIZER_DESC rasterDesc;
-	rasterDesc.AntialiasedLineEnable = false;
-
-	if (cull)
-		rasterDesc.CullMode = D3D11_CULL_BACK;
-	else
-		rasterDesc.CullMode = D3D11_CULL_FRONT;
-
-	rasterDesc.DepthBias = 0;
-	rasterDesc.DepthBiasClamp = 0.0f;
-	rasterDesc.DepthClipEnable = true;
-	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.FrontCounterClockwise = true;
-	rasterDesc.MultisampleEnable = false;
-	rasterDesc.ScissorEnable = false;
-	rasterDesc.SlopeScaledDepthBias = 0.0f;
-
-	// Create the rasterizer state from the description we just filled out.
-	hr = GD->CreateRasterizerState(&rasterDesc, &m_pRasterState);
-
-
-	BuildIB(GD, indices);
-	BuildVB(GD, numVerts, m_vertices);
-	//BuildDVB(GD, numVerts, m_vertices);
+	BuildIB(_GD, indices);
+	BuildVB(_GD, numVerts, m_vertices);
+	//BuildDVB(_GD, numVerts, m_vertices);
 
 	delete[] m_vertices; //this is no longer needed as this is now in the Vertex Buffer
 }
 
-void VBCube::Transform()
+void obstacle::Transform(GameData* _GD)
 {
+}
 
+void obstacle::Tick(GameData* _GD)
+{
+	//Transform(_GD);
+	input(_GD);
+	VBGO::Tick(_GD);
+}
+
+
+void obstacle::input(GameData* _GD)
+{
+	float SPEED = 175.0f;
+
+	if (_GD->keyboard[DIK_UPARROW] & 0x80)
+	{
+		m_pos.z -= _GD->dt * SPEED;
+	}
+
+	if (_GD->keyboard[DIK_DOWNARROW] & 0x80)
+	{
+		m_pos.z += _GD->dt * SPEED;
+	}
+
+	if (_GD->keyboard[DIK_LEFTARROW] & 0x80)
+	{
+		m_pos.x -= _GD->dt * SPEED;
+	}
+	if (_GD->keyboard[DIK_RIGHTARROW] & 0x80)
+	{
+		m_pos.x += _GD->dt * SPEED;
+	}
+
+	//Make sure we're still in the box!
+	if (m_pos.x > 190.0f)
+		m_pos.x = 190.0f;
+	else if (m_pos.x < -190.0f)
+		m_pos.x = -190.0f;
+
+	if (m_pos.z > 190.0f)
+		m_pos.z = 190.0f;
+	else if (m_pos.z < -190.0f)
+		m_pos.z = -190.0f;
 }

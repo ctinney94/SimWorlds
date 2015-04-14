@@ -61,10 +61,15 @@ Game::Game(ID3D11Device* _pd3dDevice, HINSTANCE _hInstance) :m_playTime(0), m_my
 	m_GameObjects.push_back(base);
 	base->SetPos(Vector3(100.0f, 0.0f, -100.0f));
 
+	OBS = new obstacle();
+	OBS->init(5, _pd3dDevice);
+	OBS->SetScale(4.0f);
+	m_GameObjects.push_back(OBS);
+
 	m_TPSCam = new TPSCamera(0.25f * XM_PI, 640.0f / 480.0f, 1.0f, 10000.0f, base, Vector3::UnitY, Vector3(-200.0f, 100.0f, 0.0f));
 	m_GameObjects.push_back(m_TPSCam);
 	
-	m_Light = new Light(Vector3(0.0f, 100.0f, 160.0f), Color(1.0f, 1.0f, 1.0f, 1.0f), Color(0.4f, 0.1f, 0.1f, 1.0f));
+	m_Light = new Light(Vector3(0.0f, 100.0f, 160.0f), Color(1.0f, 1.0f, 1.0f, 1.0f), Color(0.1f, 0.1f, 0.1f, 1.0f));
 	m_GameObjects.push_back(m_Light);
 
 	//Make a box for our water to sit in.
@@ -87,7 +92,8 @@ Game::Game(ID3D11Device* _pd3dDevice, HINSTANCE _hInstance) :m_playTime(0), m_my
 	water->SetPos(Vector3(-198.0f, 0.0f, -198.0f));
 	water->SetScale(4.0f);
 	m_GameObjects.push_back(water);
-		
+	
+	water->OBS = OBS;
 	water->boat = base;
 
 	ID3D11DeviceContext* pd3dImmediateContext;
@@ -222,6 +228,9 @@ void Game::render(ID3D11DeviceContext* _pd3dImmediateContext)
 	messages.push_back("Press T to toggle rain");
 	if (water->rain)
 		messages.push_back("G/H +- Rain probability");
+	messages.push_back("Press W to toggle bounce mode (ask me)");
+
+
 	vector<string> data;
 	data.push_back(to_string(water->Amp));
 	data.push_back(to_string(water->freq));
@@ -234,6 +243,7 @@ void Game::render(ID3D11DeviceContext* _pd3dImmediateContext)
 	data.push_back("Rain: " + to_string(water->rain));
 	if (water->rain)
 		data.push_back(to_string(water->rainProb));
+	data.push_back("            " + to_string(water->waterBounce));
 
 	m_DD2D->m_Sprites->Begin();
 	for (list<GameObject2D *>::iterator it = m_GameObject2Ds.begin(); it != m_GameObject2Ds.end(); it++)

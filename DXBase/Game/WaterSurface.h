@@ -6,8 +6,10 @@
 #include "GameData.h"
 #include <vector>
 #include "Turret_base.h"
+#include "obstacle.h"
 
 class Turret_Base;
+class Obstacle;
 
 class WaterSurface : public VBGO
 {
@@ -22,6 +24,7 @@ public:
 	void Draw(DrawData* _DD);
 	void Tick(GameData* _GD);
 	Turret_Base* boat;
+	obstacle* OBS;
 
 	Vector3 boatPos, prevBoatPos;
 
@@ -30,32 +33,30 @@ public:
 	float Amp = 2.0f;
 	float freq = -0.5f;
 	float opactity = 0.5f;
-	int waveType = 0;
+	bool waveType = false;
 	float damp = 1.0f;
 	float diffMultiplier = 1.0f;
 	float ColourTheshold = 0.1f;
 	bool rain = false;
 	int rainProb = 10;
+	bool waterBounce = false;
 
 protected:
 	//this is to allow custom versions of this which create the basic cube and then distort it
 	//see Spiral, SpikedVB and Pillow
 	void Transform(GameData* _GD);
 	void input(GameData* _GD);
-
+	void calcNormals();
+	void surfaceColour();
 	int getVertPos(int x, int y);
 
 	int numVerts;
 	int m_size;
-
 	bool fillMode;
 	bool ripple = false;
-
 	float diff;
-
 	int m_numVertices;
 	myVertex* m_vertices;
-
 	float* previousPos;
 	float* currentPos;
 	float* temp;

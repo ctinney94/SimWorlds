@@ -53,26 +53,8 @@ void WaterSurface::init(int _size, ID3D11Device* GD)
 		}
 	}
 
-	//carry out some kind of transform on these vertices's to make this object more interesting
-	//calculate the normals for the basic lighting in the base shader
-	for (int i = 0; i < m_numPrims; i++)
-	{
-		WORD V1 = 3 * i;
-		WORD V2 = 3 * i + 1;
-		WORD V3 = 3 * i + 2;
-
-		//build normals
-		Vector3 norm;
-		Vector3 vec1 = m_vertices[V1].Pos - m_vertices[V2].Pos;
-		Vector3 vec2 = m_vertices[V3].Pos - m_vertices[V2].Pos;
-		norm = vec1.Cross(vec2);
-		norm.Normalize();
-
-		m_vertices[V1].Norm = norm;
-		m_vertices[V2].Norm = norm;
-		m_vertices[V3].Norm = norm;
-	}
-
+	calcNormals();
+	
 	//Do an initial transform
 	for (int i = 0; i < m_numPrims * 3; i++)
 	{
@@ -145,6 +127,8 @@ void WaterSurface::Tick(GameData* _GD)
 	// Create the rasterizer state from the description we just filled out.
 	hr = m_ID3D11Device->CreateRasterizerState(&rasterDesc, &m_pRasterState);
 
+	calcNormals();
+
 	VBGO::Tick(_GD);
 }
 
@@ -172,14 +156,28 @@ void WaterSurface::Transform(GameData* _GD)
 
 		if (rain)
 		{
-			if (rand() % rainProb == 1) 
-			currentPos[getVertPos(rand() % m_size, rand() % m_size)] += 5.0f;
+			//If we have rain turned on and if we get the chance, go make a splash somewhere.
+			if (rand() % rainProb == 1)
+			{
+				//currentPos[getVertPos(rand() % m_size, rand() % m_size)] += 5.0f;
+				int randA = rand() % m_size;
+				int randB = rand() % m_size;
+				currentPos[getVertPos(randA, randB)] += 3.5f;
+				if (waterBounce)
+				{
+					currentPos[getVertPos(randA + 1, randB)] += 2.0f;
+					currentPos[getVertPos(randA - 1, randB)] += 2.0f;
+					currentPos[getVertPos(randA, randB + 1)] += 2.0f;
+					currentPos[getVertPos(randA, randB - 1)] += 2.0f;
+				}
+			}
 		}
 		for (int i = 0; i < m_size; i++)
 		{
 			for (int j = 0; j < m_size; j++)
 			{
 				int p = getVertPos(i, j);//Current vertice to edit in the loop
+				//VERLET SOLVER
 				currentPos[p] = (2.0f- damp/100)*previousPos[p] - (1.0f - damp/100) * currentPos[p] + ((-2.0f * previousPos[p]) * (0.01*0.01));
 				
 				if (ripple)
@@ -188,47 +186,30 @@ void WaterSurface::Transform(GameData* _GD)
 					ripple = false;
 				}
 
+				//Diffusion calc
 				diff = diffMultiplier * (previousPos[getVertPos(i, j-1)] + previousPos[getVertPos(i, j+1)] + previousPos[getVertPos(i+1, j)] + previousPos[getVertPos(i-1, j)] - 4.0f * previousPos[p]);
 				currentPos[p] += diff*0.01f;
 			}
 		}
-
-		for (int i = 0; i < m_numVertices; i++)
-		{
-			m_vertices[i].Pos.y = currentPos[getVertPos(m_vertices[i].Pos.x, m_vertices[i].Pos.z)];
-			float difference = currentPos[getVertPos(m_vertices[i].Pos.x, m_vertices[i].Pos.z)] - previousPos[getVertPos(m_vertices[i].Pos.x, m_vertices[i].Pos.z)];
-			
-			if (difference > ColourTheshold)
-			{
-				m_vertices[i].Color += Color(0.25f, 0.25f, 0.25f, opactity);
-			}
-		/*	else
-			{
-				m_vertices[i].Color -= Color(0.1f, 0.1f, 0.1f, 0.0f);
-				if (m_vertices[i].Color > Color(0.0f, 0.0f, 1.0f, opactity))
-					m_vertices[i].Color = Color(0.0f, 0.0f, 1.0f, opactity);
-			}*/
-			else
-				m_vertices[i].Color = Color(0.0f, 0.0f, 1.0f, opactity);
-
-
-				int limit = 100;
-				if (m_vertices[i].Pos.y > limit)
-				m_vertices[i].Pos.y = limit;
-				else if (m_vertices[i].Pos.y < -limit)
-				m_vertices[i].Pos.y = -limit;
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-		//////////////////Make ripples from the boat position/////////////////////
-		//////////////////////////////////////////////////////////////////////////
+		surfaceColour();
+		
+		//Make ripples from the boat position
 		boatPos = boat->GetPos();
 		//This offsets the position we get so (0,0) is the corner of our water plane.
 		//Our other corner is at (380, 380).
 		boatPos += Vector3(190.0f, 0.0f, 190.0f);
 		if (boatPos != prevBoatPos)
 		{
-			currentPos[getVertPos(boatPos.x / 3.8, boatPos.z / 3.8)] -= 5.0f;
+			int boatA = boatPos.x / 3.8;
+			int boatB = boatPos.z / 3.8;
+			currentPos[getVertPos(boatA, boatB)] -= 3.0f;
+			if (waterBounce)
+			{
+				currentPos[getVertPos(boatA - 1, boatB)] -= 1.0f;
+				currentPos[getVertPos(boatA + 1, boatB)] -= 1.0f;
+				currentPos[getVertPos(boatA, boatB - 1)] -= 1.0f;
+				currentPos[getVertPos(boatA, boatB + 1)] -= 1.0f;
+			}
 			prevBoatPos = boatPos;
 		}
 		temp = currentPos;
@@ -243,17 +224,16 @@ void WaterSurface::Transform(GameData* _GD)
 
 int WaterSurface::getVertPos(int x, int y)
 {
-	//i/x is the largest number, it will be our Y axis
-	//j/y is our x axis
-	//int temp = (x*(m_size - 1) * 2) + y;
-	/*if (x < 0)
-		x = 1;
-	else if (x * m_size)
-		x = m_size-1;
-	if (y < 0)
-		y = 1;
-	else if (y > m_size)
-		y = m_size-1;*/
+
+	//THIS IS BORKED TO FUCK
+	/*if (x < OBS->GetPos().x - 2.0f)
+		x = OBS->GetPos().x - 2.0f;
+	if (x > OBS->GetPos().x + 2.0f)
+		x = OBS->GetPos().x + 2.0f;
+	if (y < OBS->GetPos().z - 2.0f)
+		y = OBS->GetPos().z + 2.0f;
+	if (y > OBS->GetPos().z - 2.0f)
+		y = OBS->GetPos().z - 2.0f;*/
 
 	if (x < 0)
 		x = 0;
@@ -270,30 +250,22 @@ int WaterSurface::getVertPos(int x, int y)
 
 void WaterSurface::input(GameData* _GD)
 {
+	if (_GD->keyboard[DIK_W] && !_GD->prevKeyboard[DIK_W])
+		waterBounce = !waterBounce;
+
 	if (_GD->keyboard[DIK_LCONTROL] && !_GD->prevKeyboard[DIK_LCONTROL]) //Toggle wireframe mode.
 		fillMode = !fillMode;
 
 	if (_GD->keyboard[DIK_F] && !_GD->prevKeyboard[DIK_F])
-	{
 		if (!ripple)
 			ripple = true;
-	}
 	
 	if (_GD->keyboard[DIK_T] && !_GD->prevKeyboard[DIK_T])
-	{
-		if (!rain)
-			rain = true;
-		else
-			rain = false;
-	}
+		rain = !rain;
 
 
 	if (_GD->keyboard[DIK_TAB] && !_GD->prevKeyboard[DIK_TAB])
-	{
-		waveType++;
-		if (waveType < 1)
-			waveType = 0;
-	}
+		waveType = !waveType;
 	
 	if (_GD->keyboard[DIK_H] & 0x80)
 	{
@@ -365,4 +337,51 @@ void WaterSurface::input(GameData* _GD)
 			m_vertices[i].Color = Color(0.0f, 0.0f, 1.0f, opactity);
 		}
 	}
+}
+
+void WaterSurface::calcNormals()
+{
+	//carry out some kind of transform on these vertices's to make this object more interesting
+	//calculate the normals for the basic lighting in the base shader
+	for (int i = 0; i < m_numPrims; i++)
+	{
+		WORD V1 = 3 * i;
+		WORD V2 = 3 * i + 1;
+		WORD V3 = 3 * i + 2;
+
+		//build normals
+		Vector3 norm;
+		Vector3 vec1 = m_vertices[V1].Pos - m_vertices[V2].Pos;
+		Vector3 vec2 = m_vertices[V3].Pos - m_vertices[V2].Pos;
+		norm = vec1.Cross(vec2);
+		norm.Normalize();
+
+		m_vertices[V1].Norm = norm;
+		m_vertices[V2].Norm = norm;
+		m_vertices[V3].Norm = norm;
+	}
+}
+
+void WaterSurface::surfaceColour()
+{
+	for (int i = 0; i < m_numVertices; i++)
+	{
+		m_vertices[i].Pos.y = currentPos[getVertPos(m_vertices[i].Pos.x, m_vertices[i].Pos.z)];
+		float difference = currentPos[getVertPos(m_vertices[i].Pos.x, m_vertices[i].Pos.z)] - previousPos[getVertPos(m_vertices[i].Pos.x, m_vertices[i].Pos.z)];
+
+		if (difference > ColourTheshold)
+		{
+			m_vertices[i].Color += Color(0.25f, 0.25f, 0.25f, 0.0f);
+		}
+		else
+			m_vertices[i].Color = Color(0.0f, 0.0f, 1.0f, opactity);
+
+
+		int limit = 100;
+		if (m_vertices[i].Pos.y > limit)
+			m_vertices[i].Pos.y = limit;
+		else if (m_vertices[i].Pos.y < -limit)
+			m_vertices[i].Pos.y = -limit;
+	}
+
 }

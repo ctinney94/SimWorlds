@@ -18,5 +18,6 @@
 #include "snail.h"
 #include "VBPlane.h"
 #include "WaterSurface.h"
+#include "obstacle.h"
 
 #endif

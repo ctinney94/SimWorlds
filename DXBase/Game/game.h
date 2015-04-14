@@ -21,6 +21,7 @@ class Light;
 class TPSCamera;
 class Turret_Base;
 class WaterSurface;
+class obstacle;
 struct GameData;
 struct DrawData;
 struct DrawData2D;
@@ -46,6 +47,7 @@ protected:
 	Turret_Base* base;
 	WaterSurface* water;
 	Light* m_Light; //base light
+	obstacle* OBS;
 
 	list<GameObject *> m_GameObjects; //data structure storing all GameOBjects of this Game
 	list<GameObject2D *> m_GameObject2Ds;//ditto 2D objects
